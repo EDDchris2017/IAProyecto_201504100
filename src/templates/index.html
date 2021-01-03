@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <title>Proyecto IA - 201504100 </title>
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <!-- Navbar content -->
+            <p>
+                <h1 class="text-primary">Redes Neuronales</h1>
+                <h2 class="text-primary">201504100</h2>
+            </p>
+        </nav>
+        <br>
+            <form method="post" action="/entrenar" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputGenero">Genero</label>
+                        <select id="genero" class="form-control">
+                            <option selected>MASCULINO</option>
+                            <option>FEMENINO</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEdad">Edad</label>
+                        <input class="form-control" type="text" placeholder="100" name="edad" id="edad" value="18">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputGenero">Año de Inscripcion</label>
+                        <input class="form-control" type="text" placeholder="50" name="inscripcion" id="inscripcion" value="2015">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputDepartamento">Departamento</label>
+                        <select id="departamento" class="form-control">
+                            <option selected>Departamento 1</option>
+                            <option>Departamento 2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="inputMunicipio">Municipio</label>
+                    <select id="municipio" class="form-control">
+                        <option selected>Municipio 1</option>
+                        <option>Municipio 2</option>
+                    </select>
+                </div>
+                <br>
+                <div class="form-row">
+                    <input type="submit" value="Consultar">
+                </div>             
+            </form>
+    </body>
+</html>
