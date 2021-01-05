@@ -10,13 +10,14 @@ class NN_Model:
         self.max_iteration = iterations
         self.lambd = lambd
         self.kp = keep_prob
+        self.capas = len(layers) - 1
         # Se inicializan los pesos
         self.parametros = self.Inicializar(layers)
 
     def Inicializar(self, layers):
         parametros = {}
         L = len(layers)
-        print('layers:', layers)
+        #print('layers:', layers)
         for l in range(1, L):
             #np.random.randn(layers[l], layers[l-1])
             #Crea un arreglo que tiene layers[l] arreglos, donde cada uno de estos arreglos tiene layers[l-1] elementos con valores aleatorios
@@ -32,9 +33,9 @@ class NN_Model:
     def training(self, show_cost=False):
         self.bitacora = []
         for i in range(0, self.max_iteration):
-            y_hat, temp = self.propagacion_adelante(self.data)
+            y_hat, temp = self.propagacion_adelante(self.data, self.capas)
             cost = self.cost_function(y_hat)
-            gradientes = self.propagacion_atras(temp)
+            gradientes = self.propagacion_atras(temp, self.capas)
             self.actualizar_parametros(gradientes)
             if i % 50 == 0:
                 self.bitacora.append(cost)
@@ -42,82 +43,91 @@ class NN_Model:
                     print('Iteracion No.', i, 'Costo:', cost, sep=' ')
 
 
-    def propagacion_adelante(self, dataSet):
+    def propagacion_adelante(self, dataSet, capas):
         # Se extraen las entradas
         X = dataSet.x
-        
-        # Extraemos los pesos
-        W1 = self.parametros["W1"]
-        b1 = self.parametros["b1"]
-        
-        W2 = self.parametros["W2"]
-        b2 = self.parametros["b2"]
-        
-        W3 = self.parametros["W3"]
-        b3 = self.parametros["b3"]
+        Ares = X
+        temp = {}
 
-        # ------ Primera capa
-        Z1 = np.dot(W1, X) + b1
-        A1 = self.activation_function('relu', Z1)
-        #Se aplica el Dropout Invertido
-        D1 = np.random.rand(A1.shape[0], A1.shape[1]) #Se generan número aleatorios para cada neurona
-        D1 = (D1 < self.kp).astype(int) #Mientras más alto es kp mayor la probabilidad de que la neurona permanezca
-        A1 *= D1
-        A1 /= self.kp
+        # === CAPAS OCULTAS ===
+        for i in range(1,capas):
+            # Extraccion de Pesos
+            WN = self.parametros["W"+str(i)]
+            bn = self.parametros["b"+str(i)]
+
+            activacion = "relu"
+            #Funcion de activacion y dropout invertido
+            ZN = np.dot(WN, Ares) + bn
+            AN = self.activation_function(activacion, ZN)
+
+            ANmenos = Ares
+            if i == 1 : ANmenos = AN
+            #Se aplica el Dropout invertido
+            DN = np.random.rand(AN.shape[0], ANmenos.shape[1]) #Se generan número aleatorios para cada neurona
+            DN = (DN < self.kp).astype(int) #Mientras más alto es kp mayor la probabilidad de que la neurona permanezca
+            AN *= DN
+            AN /= self.kp
+            # Guardar ultimo AN
+            Ares = AN
+            temp["Z"+str(i)] = ZN
+            temp["A"+str(i)] = AN
+            temp["D"+str(i)] = DN
         
-        # ------ Segunda capa
-        Z2 = np.dot(W2, A1) + b2
-        A2 = self.activation_function('relu', Z2)
-        #Se aplica el Dropout Invertido
-        D2 = np.random.rand(A2.shape[0], A1.shape[1])
-        D2 = (D2 < self.kp).astype(int)
-        A2 *= D2
-        A2 /= self.kp
+        # === CAPA SALIDA ===
+        Wres = self.parametros["W"+str(capas)]
+        bres = self.parametros["b"+str(capas)]
+        activacion = 'sigmoide'
+        Zres = np.dot(Wres, Ares) + bres
+        Ares = self.activation_function(activacion, Zres)
+        temp["Z"+str(capas)] = Zres
+        temp["A"+str(capas)] = Ares
 
-        # ------ Tercera capa
-        Z3 = np.dot(W3, A2) + b3
-        A3 = self.activation_function('sigmoide', Z3)
+        #En A_res va la predicción o el resultado de la red neuronal
+        return Ares, temp
 
-        temp = (Z1, A1, D1, Z2, A2, D2, Z3, A3)
-        #En A3 va la predicción o el resultado de la red neuronal
-        return A3, temp
-
-    def propagacion_atras(self, temp):
+    def propagacion_atras(self, temp, capas):
         # Se obtienen los datos
         m = self.data.m
         Y = self.data.y
         X = self.data.x
-        W1 = self.parametros["W1"]
-        W2 = self.parametros["W2"]
-        W3 = self.parametros["W3"]
-        (Z1, A1, D1, Z2, A2, D2, Z3, A3) = temp
 
-        # Derivadas parciales de la tercera capa
-        dZ3 = A3 - Y
-        dW3 = (1 / m) * np.dot(dZ3, A2.T) + (self.lambd / m) * W3
-        db3 = (1 / m) * np.sum(dZ3, axis=1, keepdims=True)
+        # === GRADIENTES ===
+        gradientes = {}
 
-        # Derivadas parciales de la segunda capa
-        dA2 = np.dot(W3.T, dZ3)
-        dA2 *= D2
-        dA2 /= self.kp
-        dZ2 = np.multiply(dA2, np.int64(A2 > 0))
-        dW2 = 1. / m * np.dot(dZ2, A1.T) + (self.lambd / m) * W2
-        db2 = 1. / m * np.sum(dZ2, axis=1, keepdims=True)
+        # === CAPA SALIDA ===
+        Ares  = temp["A"+str(capas)]
+        Wres  = self.parametros["W"+str(capas)]
+        dZres = Ares - Y
+        dWres = ( 1 / m) * np.dot(dZres, temp["A"+str(capas-1)].T) + (self.lambd / m) * Wres
+        dbres = (1 / m) * np.sum(dZres, axis=1, keepdims=True)
+        gradientes["dZ"+str(capas)] = dZres
+        gradientes["dW"+str(capas)] = dWres
+        gradientes["db"+str(capas)] = dbres
 
-        # Derivadas parciales de la primera capa
-        dA1 = np.dot(W2.T, dZ2)
-        dA1 *= D1
-        dA1 /= self.kp
-        dZ1 = np.multiply(dA1, np.int64(A1 > 0))
-        dW1 = 1./m * np.dot(dZ1, X.T) + (self.lambd / m) * W1
-        db1 = 1./m * np.sum(dZ1, axis=1, keepdims = True)
+        # === CAPAS OCULTAS ===
+        for i in reversed(range(1,capas)):
+            WN = self.parametros["W"+str(i)]
+            WNmas = self.parametros["W"+str(i+1)]
+            dZmas = gradientes["dZ"+str(i + 1)]
+            DN    = temp["D"+str(i)]
+            AN    = temp["A"+str(i)]
+            ANmenos = None
+            # Verificar si es capa de entrada
+            if i > 1 : ANmenos = temp["A"+str(i-1)] 
+            else: ANmenos = X
+            dAN = np.dot(WNmas.T, dZmas)
+            dAN *= DN
+            dAN /= self.kp
+            dZN = np.multiply(dAN, np.int64(AN > 0))
+            dWN = 1. / m * np.dot(dZN, ANmenos.T) + (self.lambd / m) * WN
+            dbN = 1. / m * np.sum(dZN, axis=1, keepdims=True)
 
-        #Se guardan todas la derivadas parciales
-        gradientes = {"dZ3": dZ3, "dW3": dW3, "db3": db3,
-                     "dA2": dA2, "dZ2": dZ2, "dW2": dW2, "db2": db2,
-                     "dA1": dA1, "dZ1": dZ1, "dW1": dW1, "db1": db1}
-
+            #Guardar gradientes
+            gradientes["dA"+str(i)] = dAN
+            gradientes["dZ"+str(i)] = dZN
+            gradientes["dW"+str(i)] = dWN
+            gradientes["db"+str(i)] = dbN
+        
         return gradientes
 
     def actualizar_parametros(self, grad):
@@ -149,12 +159,12 @@ class NN_Model:
         Y = dataSet.y
         p = np.zeros((1, m), dtype= np.int)
         # Propagacion hacia adelante
-        y_hat, temp = self.propagacion_adelante(dataSet)
+        y_hat, temp = self.propagacion_adelante(dataSet, self.capas)
         # Convertir probabilidad
         for i in range(0, m):
             p[0, i] = 1 if y_hat[0, i] > 0.5 else 0
         exactitud = np.mean((p[0, :] == Y[0, ]))
-        print("Exactitud: " + str(exactitud))
+        #print("Exactitud: " + str(exactitud))
         return exactitud
 
 
