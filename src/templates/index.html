@@ -71,10 +71,10 @@
                     <input type="submit" value="Consultar">
                 </div>             
             </form>
-            {% if resultado %}
-            <p>
-                <h2 class="text-primary">{{resultado}}</h2>
-            </p>
-            {% endif %}
+                {% if resultado == 1 %}
+                <h2 class="text-success">   ESTUDIANTE ACTIVO</h2>
+                {% elif resultado == 0 %}
+                <h2 class="text-warning">    ESTUDIANTE NO ACTIVO</h2>
+                {% endif %}
     </body>
 </html>

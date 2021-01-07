@@ -32,8 +32,8 @@ def cargarDatos(ruta):
     max_edad = int(max(lista_training, key=lambda x: int(x['edad']))['edad'])
 
     # === Manejo de datos Inscripcion === 
-    min_anio = int(min(lista_training, key=lambda x: int(x['Año']))['Año'])
-    max_anio = int(max(lista_training, key=lambda x: int(x['Año']))['Año'])
+    min_anio = int(min(lista_training, key=lambda x: int(x['Anio']))['Anio'])
+    max_anio = int(max(lista_training, key=lambda x: int(x['Anio']))['Anio'])
 
     # === Manejo de datos Distancia de Municipio ===
     min_dist = min(lista_muni, key=lambda x: distancia(float(x['Lat']), float(x['Lon']), LATITUD2, LONGITUD2))
@@ -48,7 +48,7 @@ def cargarDatos(ruta):
         if element['Genero'] == "MASCULINO" : genero = 1
         dist = escalarVariable( getDistancia(element['cod_depto'], element['cod_muni'], lista_muni), min_dist, max_dist)
         edad = escalarVariable(int(element['edad']), min_edad, max_edad)
-        anio = escalarVariable(int(element["Año"]), min_anio, max_anio)
+        anio = escalarVariable(int(element["Anio"]), min_anio, max_anio)
         salida = 0
         if element['Estado'] == "Activo": salida = 1
         arreglo_training = np.append(arreglo_training, {"datos": np.array([genero,edad,anio,dist]), "salida" : salida})

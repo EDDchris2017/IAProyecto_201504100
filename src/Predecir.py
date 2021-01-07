@@ -34,8 +34,9 @@ class Predecir:
             arreglo_y = arreglo_y.T
 
             val_set   = Data(arreglo_x, arreglo_y)
-            nNuevo = NN_Model(self.modelo.data, [self.modelo.data.n, 5, 5, 4, 4, 3, 1], alpha=self.modelo.alpha, iterations=self.modelo.max_iteration, lambd=self.modelo.lambd, keep_prob=self.modelo.kp)
-            p = nNuevo.predictNormal(val_set)
+            #nNuevo = NN_Model(self.modelo.data, [self.modelo.data.n, 7, 7, 5, 5, 3, 1], alpha=self.modelo.alpha, iterations=self.modelo.max_iteration, lambd=self.modelo.lambd, keep_prob=self.modelo.kp)
+            #nNuevo.parametros = self.modelo.parametros
+            p = self.modelo.predictNormal(val_set)
             
             return p
 
@@ -61,8 +62,8 @@ class Predecir:
         self.max_edad = int(max(lista_training, key=lambda x: int(x['edad']))['edad'])
 
         # === Manejo de datos Inscripcion === 
-        self.min_anio = int(min(lista_training, key=lambda x: int(x['Año']))['Año'])
-        self.max_anio = int(max(lista_training, key=lambda x: int(x['Año']))['Año'])
+        self.min_anio = int(min(lista_training, key=lambda x: int(x['Anio']))['Anio'])
+        self.max_anio = int(max(lista_training, key=lambda x: int(x['Anio']))['Anio'])
 
         # === Manejo de datos Distancia de Municipio ===
         self.min_dist = min(lista_muni, key=lambda x: self.distancia(float(x['Lat']), float(x['Lon']), self.LATITUD2, self.LONGITUD2))

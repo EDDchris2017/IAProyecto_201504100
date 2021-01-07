@@ -17,7 +17,7 @@ app.config.from_object(__name__)
 Session(app)
 
 # Incializar Prediccion del Modelo
-predecir = Predecir("../datasets", "modelo2")
+predecir = Predecir("../datasets", "modelo3")
 
 @app.route('/status')
 def status():
@@ -66,6 +66,7 @@ def evaluar():
 
     # Predecir parametro 
     res = predecir.predecir(genero, edad, inscripcion, departamento, municipio)
+    print("PREDICCION ", res)
 
     return render_template("index.html", lista_muni=predecir.lista_muni, resultado=res[0][0])
 

@@ -67,3 +67,4 @@ def comenzarGenetico(iteraciones, ruta, resArchivo, numPoblacion):
 
 #entrenamiento("../datasets", "modelo", "graficaModelo", generaciones=50, numPoblacion=10)
 #entrenamiento("../datasets", "modelo3", "graficaModelo3", generaciones=50, numPoblacion=10)
+#entrenamiento("../datasets", "modelo4", "graficaModelo4", generaciones=50, numPoblacion=10)
