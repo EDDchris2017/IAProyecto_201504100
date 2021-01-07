@@ -18,6 +18,7 @@ class Predecir:
         self.min_dist      = 0
         self.max_dist      = 0
         self.lista_muni    = None
+        self.lista_training = None
         self.modelo        = None
         self.inicializar(ruta_datos)
         self.cargarModelo(ruta_modelo)
@@ -48,6 +49,7 @@ class Predecir:
         lista_muni = []
         self.lista_muni = lista_muni
         lista_training = []
+        self.lista_training = lista_training
         # Leer contenido del CSV
         with open(ruta + "/" + ARCHIVO_DATOS) as datos_training:
             with open(ruta + "/" + ARCHIVOS_MUNI) as datos_muni:
@@ -93,4 +95,16 @@ class Predecir:
 
     def cargarModelo(self, ruta_modelo):
         self.modelo = pickle.load(open(ruta_modelo + ".ml", "rb"))
+    
+    def listaDept(self):
+        lista = []
+        for i in range(1,23):
+            row = next((item for item in self.lista_training if item["cod_depto"] == str(i)), False)
+            lista.append({'codigo' : str(i), 'nombre' : row['nombre']})
+        return lista
+    
+    def paramsModelo(self):
+        if self.modelo != None:
+            return "alpha: " + str(self.modelo.alpha) + " Lambda: " + str(self.modelo.lambd) + " Max iteration: " + str(self.modelo.max_iteration) + " kp: " + str(self.modelo.kp)
+        return "error al cargar modelo"
 

@@ -24,6 +24,10 @@
                 </A>
                 <h2 class="text-primary">201504100</h2>
             </p>
+            <br>
+            <p>
+                <h1 class="text-warning">{{msg}}</h1>
+            </p>
         </nav>
         <br>
             <form method="post" action="/evaluar" enctype="multipart/form-data">
@@ -48,9 +52,9 @@
                     <div class="form-group col-md-6">
                         <label for="inputDepartamento">Departamento</label>
                         <select id="departamento" class="form-control" name="departamento">
-                            {% if lista_muni %}
-                                {% for muni in lista_muni %}
-                                    <option selected value="{{muni['Depto']}}">{{muni['Depto']}}</option>
+                            {% if dept %}
+                                {% for departamento in dept %}
+                                    <option selected value="{{departamento['codigo']}}">{{departamento['codigo'] + " - " + departamento['nombre']}}</option>
                                 {% endfor %}
                         {% endif %}
                         </select>

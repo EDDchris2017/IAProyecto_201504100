@@ -18,6 +18,9 @@ Session(app)
 
 # Incializar Prediccion del Modelo
 predecir = Predecir("../datasets", "modelo3")
+departamentos = predecir.listaDept()
+msg = predecir.paramsModelo()
+print(msg)
 
 @app.route('/status')
 def status():
@@ -25,7 +28,7 @@ def status():
 
 @app.route('/')
 def home_form():
-    return render_template("index.html", lista_muni=predecir.lista_muni)
+    return render_template("index.html", lista_muni=predecir.lista_muni, dept=departamentos, msg=msg)
 
 @app.route('/entrenar')
 def entrenar():
@@ -68,7 +71,7 @@ def evaluar():
     res = predecir.predecir(genero, edad, inscripcion, departamento, municipio)
     print("PREDICCION ", res)
 
-    return render_template("index.html", lista_muni=predecir.lista_muni, resultado=res[0][0])
+    return render_template("index.html", lista_muni=predecir.lista_muni, resultado=res[0][0], dept = departamentos, msg=msg)
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000, debug=True)
