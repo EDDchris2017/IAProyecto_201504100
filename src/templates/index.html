@@ -19,6 +19,9 @@
             <!-- Navbar content -->
             <p>
                 <h1 class="text-primary">Redes Neuronales</h1>
+                <A HREF = "http://localhost:5000/entrenar">
+                    <h4 class="text-primary">Entrenar</h4>
+                </A>
                 <h2 class="text-primary">201504100</h2>
             </p>
         </nav>
@@ -68,5 +71,10 @@
                     <input type="submit" value="Consultar">
                 </div>             
             </form>
+            {% if resultado %}
+            <p>
+                <h2 class="text-primary">{{resultado}}</h2>
+            </p>
+            {% endif %}
     </body>
 </html>

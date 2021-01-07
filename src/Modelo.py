@@ -25,7 +25,7 @@ def entrenamiento(ruta, nombre_modelo, nombre_grafica, generaciones, numPoblacio
     nn1 = NN_Model(params['train_set'], params['capas'], alpha=params_solucion['alpha'], iterations=params_solucion['iterations'], lambd=params_solucion['lambd'], keep_prob=params_solucion['keep_prob'])
     # Se entrena el modelo
     nn1.training(False)
-    Plotter.show_Model([nn1])
+    Plotter.show_Model([nn1], nombre_grafica)
     # Guardar Modelo
     guardarModelo(nn1, nombre_modelo)
 
@@ -44,6 +44,7 @@ def comenzarGenetico(iteraciones, ruta, resArchivo, numPoblacion):
     val_set   = Data(val_X, val_Y)
 
     # Se define las dimensiones de las capas
+    #capas = [train_set.n, 5, 5, 4, 4, 3, 1]
     capas = [train_set.n, 7, 7, 5, 5, 3, 1]
 
     #  ==== Lectura archivo CSV Hiperparametros ====
@@ -61,37 +62,8 @@ def comenzarGenetico(iteraciones, ruta, resArchivo, numPoblacion):
 
     return {"params": hiper_params, "train_set" : train_set , "val_set" : val_set, "capas" : capas }
 
-def entrenarModelo():
-    # Cargando conjunto de datos
-    train_X, train_Y, val_X, val_Y = File.cargarDatos("../datasets")
 
-    #Definir los conjuntos de datos
-    train_set = Data(train_X, train_Y)
-    val_set   = Data(val_X, val_Y)
-
-    # Se define las dimensiones de las capas
-    capas1 = [train_set.n, 10, 5, 1]
-
-    # Se define el modelo
-    nn1 = NN_Model(train_set, capas1, alpha=0.001, iterations=50000, lambd=0, keep_prob=0.5)
-
-    # Se entrena el modelo
-    nn1.training(False)
-
-    # Se analiza el entrenamiento
-    Plotter.show_Model([nn1])
-
-    print('Entrenamiento Modelo 1')
-    nn1.predict(train_set)
-    print('Validacion Modelo 1')
-    nn1.predict(val_set)
-
-# =================================== PREDICCION DE DATOS ==================================
-def prediccionDatos(genero, edad, inscripcion, departamento, municipio):
-    respuesta = 0
-
-    return respuesta
 
 
 #entrenamiento("../datasets", "modelo", "graficaModelo", generaciones=50, numPoblacion=10)
-entrenamiento("../datasets", "modelo2", "graficaModelo", generaciones=50, numPoblacion=10)
+#entrenamiento("../datasets", "modelo3", "graficaModelo3", generaciones=50, numPoblacion=10)

@@ -4,3 +4,12 @@ alpha:  0.5
 iterations:  4000
 lambd:  0.1
 keep_prob:  0.97
+
+
+0.7310481212920237
+[6, 9, 9, 0]
+alpha: 0.5
+iterations: 5000
+lambd: 2.0
+keep_prob: 1.0
+

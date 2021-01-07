@@ -48,6 +48,10 @@ class Genetico:
         print(fin.solucion)
 
         hiperparametros = self.getDataTraining(fin.solucion[0], fin.solucion[1], fin.solucion[2], fin.solucion[3])
+        try:
+            self.guardarBitacora(fin, hiperparametros)
+        except:
+            print("Error al guardar en bitacora")
 
         return hiperparametros
     
@@ -55,6 +59,20 @@ class Genetico:
         maximo = max(poblacion, key=lambda x: x.fitness)
         print("-> Generacion ", generacion, " : ", maximo.fitness)
         print("     ",maximo.solucion)
+    
+    # {'alpha' : alpha, 'lambd' : lambd, 'iterations' : max_iteration, 'keep_prob' : keep_prob}
+    def guardarBitacora(self, fin, params):
+        cad_registro = ""
+        cad_registro += str(fin.fitness) + "\n"
+        cad_registro += str(fin.solucion) + "\n"
+        cad_registro += "alpha: " + str(params['alpha']) + "\n"
+        cad_registro += "iterations: " + str(params['iterations']) + "\n"
+        cad_registro += "lambd: " + str(params['lambd']) + "\n"
+        cad_registro += "keep_prob: " + str(params['keep_prob']) + "\n"
+
+        f = open("log" + ".txt", 'a')
+        f.write('\n' + cad_registro + '\n')
+        f.close()
 
     # ===================================== INICIALIZAR POBLACION =====================================
     def inicializarPoblacion(self):

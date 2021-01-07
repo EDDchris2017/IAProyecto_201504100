@@ -166,6 +166,18 @@ class NN_Model:
         exactitud = np.mean((p[0, :] == Y[0, ]))
         #print("Exactitud: " + str(exactitud))
         return exactitud
+    
+    def predictNormal(self, dataSet):
+        m = dataSet.m
+        Y = dataSet.y
+        p = np.zeros((1, m), dtype= np.int)
+        # Propagacion hacia adelante
+        y_hat, temp = self.propagacion_adelante(dataSet, self.capas)
+        # Convertir probabilidad
+        for i in range(0, m):
+            p[0, i] = 1 if y_hat[0, i] > 0.5 else 0
+
+        return p
 
 
     def activation_function(self, name, x):

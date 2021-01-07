@@ -3,6 +3,7 @@ import math
 import pickle
 import numpy as np
 from Neural_Network.Data import Data
+from Neural_Network.Model import NN_Model
 
 ARCHIVO_DATOS = "Dataset.csv"
 ARCHIVOS_MUNI = "Municipios.csv"
@@ -28,11 +29,15 @@ class Predecir:
             inscripcion_res = self.escalarVariable(inscripcion, self.min_anio, self.max_anio)
             distancia_res = self.escalarVariable( self.getDistancia(departamento, municipio), self.min_dist, self.max_dist)
             arreglo_x = np.array([np.array([genero_res, edad_res, inscripcion_res, distancia_res])])
+            arreglo_x = arreglo_x.T
             arreglo_y = np.array([[1]])
+            arreglo_y = arreglo_y.T
 
             val_set   = Data(arreglo_x, arreglo_y)
-            p = self.modelo.predictNormal(val_set)
-            print(p)
+            nNuevo = NN_Model(self.modelo.data, [self.modelo.data.n, 5, 5, 4, 4, 3, 1], alpha=self.modelo.alpha, iterations=self.modelo.max_iteration, lambd=self.modelo.lambd, keep_prob=self.modelo.kp)
+            p = nNuevo.predictNormal(val_set)
+            
+            return p
 
         else:
             print("NO HAY MODELO CARGADO EN LA APLICACION")

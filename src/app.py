@@ -17,7 +17,7 @@ app.config.from_object(__name__)
 Session(app)
 
 # Incializar Prediccion del Modelo
-predecir = Predecir("../datasets", "modelo")
+predecir = Predecir("../datasets", "modelo2")
 
 @app.route('/status')
 def status():
@@ -25,8 +25,30 @@ def status():
 
 @app.route('/')
 def home_form():
-    datos = 2
     return render_template("index.html", lista_muni=predecir.lista_muni)
+
+@app.route('/entrenar')
+def entrenar():
+    return render_template("entrenar.html")
+
+@app.route('/probar', methods=['GET', 'POST'])
+def probar():
+    if request.method == 'POST':
+        iteraciones     = int(request.form['iteraciones'])
+        numPoblacion    = int(request.form['poblacion'])
+        nombreModelo    = (request.form['modelo'])
+        nombreGrafica   = (request.form['grafica'])
+        print("Generaciones -> ", iteraciones)
+        print("Poblacion    -> ", numPoblacion)
+        print("Nombre Modelo-> ", nombreModelo)
+        print("Grafica      -> ", nombreGrafica)
+        try:
+            entrenamiento("../datasets", nombreModelo, nombreGrafica, generaciones=iteraciones, numPoblacion=numPoblacion)
+            return render_template("entrenar.html", respuesta = 1)
+        except:
+            return render_template("entrenar.html")
+    return render_template("entrenar.html")
+    
 
 @app.route('/evaluar', methods=['GET', 'POST'])
 def evaluar():
@@ -42,9 +64,10 @@ def evaluar():
     print(departamento)
     print(municipio)
 
-    #respuesta = prediccionDatos(genero, edad, inscripcion, departamento, municipio)
+    # Predecir parametro 
+    res = predecir.predecir(genero, edad, inscripcion, departamento, municipio)
 
-    return render_template("index.html", lista_muni=predecir.lista_muni)
+    return render_template("index.html", lista_muni=predecir.lista_muni, resultado=res[0][0])
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000, debug=True)
