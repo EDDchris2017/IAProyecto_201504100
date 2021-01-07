@@ -11,4 +11,5 @@ def show_Model(models):
     chart.ylabel('Costo')
     chart.xlabel('Iteraciones')
     legend = chart.legend(loc='upper center', shadow=True)
+    chart.savefig("graficaModelo" + ".png")
     chart.show()

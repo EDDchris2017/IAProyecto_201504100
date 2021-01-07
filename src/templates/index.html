@@ -23,13 +23,13 @@
             </p>
         </nav>
         <br>
-            <form method="post" action="/entrenar" enctype="multipart/form-data">
+            <form method="post" action="/evaluar" enctype="multipart/form-data">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputGenero">Genero</label>
-                        <select id="genero" class="form-control">
-                            <option selected>MASCULINO</option>
-                            <option>FEMENINO</option>
+                        <select id="genero" class="form-control" name="genero">
+                            <option selected value="1">MASCULINO</option>
+                            <option value="0">FEMENINO</option>
                         </select>
                     </div>
                     <div class="form-group col-md-6">
@@ -44,17 +44,23 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputDepartamento">Departamento</label>
-                        <select id="departamento" class="form-control">
-                            <option selected>Departamento 1</option>
-                            <option>Departamento 2</option>
+                        <select id="departamento" class="form-control" name="departamento">
+                            {% if lista_muni %}
+                                {% for muni in lista_muni %}
+                                    <option selected value="{{muni['Depto']}}">{{muni['Depto']}}</option>
+                                {% endfor %}
+                        {% endif %}
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <label for="inputMunicipio">Municipio</label>
-                    <select id="municipio" class="form-control">
-                        <option selected>Municipio 1</option>
-                        <option>Municipio 2</option>
+                    <select id="municipio" class="form-control" name="municipio">
+                        {% if lista_muni %}
+                            {% for muni in lista_muni %}
+                                <option value="{{muni['Muni']}}">{{muni['Nombre']}}</option>
+                            {% endfor %}
+                        {% endif %}
                     </select>
                 </div>
                 <br>

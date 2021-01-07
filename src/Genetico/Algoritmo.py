@@ -14,7 +14,7 @@ class Nodo:
         self.fitness  = fitness
     
     def __gt__(self, nodo):
-        return self.fitness > nodo.fitness
+        return self.fitness < nodo.fitness
 
 class Genetico:
 
@@ -27,7 +27,7 @@ class Genetico:
         self.val_set      = val_set
         self.capas        = capas
         self.capasN       = capasN
-        self.porcentaje_padres = 50
+        self.porcentaje_padres = 40
     
     def ejecutar(self):
 
@@ -37,7 +37,6 @@ class Genetico:
         fin = self.verificarCriterio(poblacion, generacion)
         self.imprimirPoblacion(poblacion, generacion)
         while fin == None:
-            print( generacion)
             padres      = self.seleccionarPadres( poblacion)
             poblacion   = self.emparejar(padres)
             generacion  += 1
@@ -48,7 +47,9 @@ class Genetico:
         print("Termino el algoritmo ...")
         print(fin.solucion)
 
-        return fin
+        hiperparametros = self.getDataTraining(fin.solucion[0], fin.solucion[1], fin.solucion[2], fin.solucion[3])
+
+        return hiperparametros
     
     def imprimirPoblacion(self, poblacion, generacion):
         maximo = max(poblacion, key=lambda x: x.fitness)
@@ -59,7 +60,7 @@ class Genetico:
     def inicializarPoblacion(self):
         poblacion = []
         for i in range(self.numPoblacion):
-             poblacion.append(self.crearIndividuo())
+            poblacion.append(self.crearIndividuo())
 
         return poblacion
     
@@ -106,23 +107,29 @@ class Genetico:
         return fin
     
     # ===================================== SELECCION DE PADRES =====================================
-    # Tomar 50% de padres
+    # Tomar Porcentaje de padres
     def seleccionarPadres(self, poblacion):
         mejores_padres = []
         padres_considerar = int(self.porcentaje_padres * len(poblacion) / 100)
         mejores_padres = sorted(poblacion)[:padres_considerar]
+        mejores_padres = mejores_padres.copy()
         return mejores_padres
     
-    # ===================================== EMPAREJAMIENTO DE PADRES =====================================
-    # Generar 2 hijos por padre
+    # ===================================== EMPAREJAMIENTO DE PADRES ===================================== 
     def emparejar(self, padres):
-        nueva_poblacion = padres
+        nueva_poblacion = padres.copy()
+        print("PADRES ", len(nueva_poblacion))
         cont = 0
-        for i in range(1, int(self.numPoblacion/4) + 1):
-            nueva_poblacion.append( self.cruzar(padres[cont], padres[cont + 1], 1))
-            nueva_poblacion.append( self.cruzar(padres[cont], padres[cont + 1], 1))
-            cont += 2
-
+        # Recorrer padres
+        while cont < self.numPoblacion - len(padres):
+            for pos1 in range(len(padres)):
+                padre1 = padres[pos1]
+                for pos2 in range(pos1 + 1, len(padres)):
+                    padre2 = padres[pos2]
+                    nueva_poblacion.append( self.cruzar(padre1, padre2, 1))
+                    cont += 1
+                    if cont == self.numPoblacion - len(padres) :
+                        return nueva_poblacion
         return nueva_poblacion
     
     def cruzar(self, p1, p2, tipo):

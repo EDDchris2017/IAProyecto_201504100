@@ -6,16 +6,35 @@ from Util import Plotter
 from Genetico import Algoritmo 
 import pandas as pd
 from Genetico.Algoritmo import *
+import pickle
 
 
 
-def entrenamiento(ruta):
+def entrenamiento(ruta, nombre_modelo, nombre_grafica, generaciones, numPoblacion):
     # comenzar entrenamiento con Algoritmo Genetico
-    comenzarGenetico(2, ruta, "principal")
+    params = comenzarGenetico(generaciones, ruta, "principal", numPoblacion)
+    params_solucion = params['params']
+
+    # Imprimir Datos
+    print("alpha: ", params_solucion['alpha'])
+    print("iterations: ", params_solucion['iterations'])
+    print("lambd: ", params_solucion['lambd'])
+    print("keep_prob: ", params_solucion['keep_prob'])
+
+    # Se define el modelo
+    nn1 = NN_Model(params['train_set'], params['capas'], alpha=params_solucion['alpha'], iterations=params_solucion['iterations'], lambd=params_solucion['lambd'], keep_prob=params_solucion['keep_prob'])
+    # Se entrena el modelo
+    nn1.training(False)
+    Plotter.show_Model([nn1])
+    # Guardar Modelo
+    guardarModelo(nn1, nombre_modelo)
+
+def guardarModelo(modelo, nombre):
+    pickle.dump(modelo, open(nombre + ".ml", "wb"))
 
 
-def comenzarGenetico(iteraciones, ruta, resArchivo):
-    hiper_params = None
+
+def comenzarGenetico(iteraciones, ruta, resArchivo, numPoblacion):
     # Lectura archivo de Entrenamiento y Validacion
     train_X, train_Y, val_X, val_Y = File.cargarDatos(ruta)
 
@@ -25,7 +44,7 @@ def comenzarGenetico(iteraciones, ruta, resArchivo):
     val_set   = Data(val_X, val_Y)
 
     # Se define las dimensiones de las capas
-    capas = [train_set.n, 7, 5, 5, 3, 1]
+    capas = [train_set.n, 7, 7, 5, 5, 3, 1]
 
     #  ==== Lectura archivo CSV Hiperparametros ====
     entradas_params = {}
@@ -37,10 +56,10 @@ def comenzarGenetico(iteraciones, ruta, resArchivo):
 
     # Inicializacion de Algoritmo Genetico
     print("Ejecutando Algoritmo Genetico ...")
-    genetico = Genetico(iteraciones, entradas_params, 16, len(entradas_params["alpha"]), train_set, val_set, capas, 6)
-    genetico.ejecutar()
+    genetico = Genetico(iteraciones, entradas_params, numPoblacion, len(entradas_params["alpha"]), train_set, val_set, capas, 6)
+    hiper_params = genetico.ejecutar()
 
-    return hiper_params
+    return {"params": hiper_params, "train_set" : train_set , "val_set" : val_set, "capas" : capas }
 
 def entrenarModelo():
     # Cargando conjunto de datos
@@ -67,4 +86,12 @@ def entrenarModelo():
     print('Validacion Modelo 1')
     nn1.predict(val_set)
 
-entrenamiento("../datasets")
+# =================================== PREDICCION DE DATOS ==================================
+def prediccionDatos(genero, edad, inscripcion, departamento, municipio):
+    respuesta = 0
+
+    return respuesta
+
+
+#entrenamiento("../datasets", "modelo", "graficaModelo", generaciones=50, numPoblacion=10)
+entrenamiento("../datasets", "modelo2", "graficaModelo", generaciones=50, numPoblacion=10)
